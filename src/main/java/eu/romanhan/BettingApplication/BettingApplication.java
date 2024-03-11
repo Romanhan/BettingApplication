@@ -1,4 +1,4 @@
-package eu.romanhan;
+package eu.romanhan.BettingApplication;
 
 public class BettingApplication {
 	public static void main(String[] args) {
