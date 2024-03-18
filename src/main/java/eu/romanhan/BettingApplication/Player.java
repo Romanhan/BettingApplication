@@ -4,14 +4,12 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.UUID;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Player {
 
@@ -20,6 +18,14 @@ public class Player {
 	private int totalBets;
 	private int totalWins;
 	private boolean hasIllegalAction = false;
+
+	public Player(UUID playerId) {
+		this.playerId = playerId;
+		this.balance = 0;
+		this.totalBets = 0;
+		this.totalWins = 0;
+		this.hasIllegalAction = false;
+	}
 
 	public void deposit(long amount) {
 		if (amount < 0) {
@@ -39,7 +45,7 @@ public class Player {
 		}
 	}
 
-	public void placeBet(Match match, String side, long amount) {
+	public void placeBet(Match match, int amount, String side) {
 		if (balance < amount) {
 			hasIllegalAction = true;
 			throw new IllegalStateException("Illegal action! Insufficient funds for bet");
@@ -49,8 +55,9 @@ public class Player {
 		if (side == null || side.isEmpty()) {
 			return;
 		}
+
 		if (match.getResult().equals(side)) {
-			balance += amount * match.calculateWinnings(side, amount);
+			balance += match.calculateWinnings(side, amount);
 			totalWins++;
 		}
 		totalBets++;
@@ -62,4 +69,5 @@ public class Player {
 		}
 		return BigDecimal.valueOf((double) totalWins / totalBets).setScale(2, RoundingMode.HALF_UP);
 	}
+
 }

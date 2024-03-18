@@ -54,7 +54,7 @@ class PlayerTest {
 		player.setTotalWins(1);
 
 		player.setBalance(50);
-		player.placeBet(match, "A", 10);
+		player.placeBet(match, 10, "A");
 
 		assertEquals(6, player.getTotalBets());
 		assertEquals(40, player.getBalance());
@@ -67,7 +67,7 @@ class PlayerTest {
 		Player player = new Player();
 		player.setBalance(50);
 
-		assertThrows(IllegalStateException.class, () -> player.placeBet(match, "A", 60));
+		assertThrows(IllegalStateException.class, () -> player.placeBet(match, 60, "A"));
 	}
 
 	@Test

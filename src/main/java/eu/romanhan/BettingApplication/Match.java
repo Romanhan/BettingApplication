@@ -18,8 +18,15 @@ public class Match {
 	private double rateB;
 	private String result;
 
-	public long calculateWinnings(String side, long amount) {
-		return (long) (side.equals("A") ? rateA * amount : rateB * amount);
+	public int calculateWinnings(String side, int amount) {
+		if (result.equals("DRAW")) {
+			return amount;
+		} else if (result.equals("A") && side.equals("A")) {
+			return (int) (rateA * amount);
+		} else if (result.equals("B") && side.equals("B")) {
+			return (int) (rateB * amount);
+		}
+		return 0;
 	}
 
 }
