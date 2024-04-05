@@ -7,6 +7,9 @@ import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
 
+import eu.romanhan.BettingApplication.exceptions.IllegalWithdrawAmountException;
+import eu.romanhan.BettingApplication.exceptions.InsufficientFundsException;
+
 class PlayerTest {
 
 	@Test
@@ -40,7 +43,8 @@ class PlayerTest {
 		Player player = new Player();
 		player.deposit(50);
 
-		assertThrows(IllegalStateException.class, () -> player.withdraw(60), "Insufficient funds message expected");
+		assertThrows(IllegalWithdrawAmountException.class, () -> player.withdraw(60),
+				"Insufficient funds message expected");
 		assertEquals(true, player.isHasIllegalAction());
 	}
 
@@ -62,12 +66,12 @@ class PlayerTest {
 	}
 
 	@Test
-	void testPlaceBetIllegalAction() {
+	void testPlaceBetGreaterThatBalance() {
 		Match match = new Match();
 		Player player = new Player();
 		player.setBalance(50);
 
-		assertThrows(IllegalStateException.class, () -> player.placeBet(match, 60, "A"));
+		assertThrows(InsufficientFundsException.class, () -> player.placeBet(match, 60, "A"));
 	}
 
 	@Test

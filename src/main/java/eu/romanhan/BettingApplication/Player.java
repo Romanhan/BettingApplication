@@ -2,8 +2,12 @@ package eu.romanhan.BettingApplication;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import eu.romanhan.BettingApplication.exceptions.IllegalWithdrawAmountException;
+import eu.romanhan.BettingApplication.exceptions.InsufficientFundsException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,13 +22,14 @@ public class Player {
 	private int totalBets;
 	private int totalWins;
 	private boolean hasIllegalAction = false;
+	private List<String[]> actionData;
 
 	public Player(UUID playerId) {
 		this.playerId = playerId;
 		this.balance = 0;
 		this.totalBets = 0;
 		this.totalWins = 0;
-		this.hasIllegalAction = false;
+		this.actionData = new ArrayList<String[]>();
 	}
 
 	public void deposit(long amount) {
@@ -39,28 +44,35 @@ public class Player {
 	public void withdraw(long amount) {
 		if (amount > balance) {
 			hasIllegalAction = true;
-			throw new IllegalStateException("Illegal action! Cannot withdrsw more than balance");
+			throw new IllegalWithdrawAmountException("" + amount);
 		} else {
 			balance -= amount;
 		}
 	}
 
-	public void placeBet(Match match, int amount, String side) {
+	public int placeBet(Match match, int amount, String side) {
 		if (balance < amount) {
-			hasIllegalAction = true;
-			throw new IllegalStateException("Illegal action! Insufficient funds for bet");
+			throw new InsufficientFundsException("Illegal action! Insufficient funds for bet");
 		}
+		int winAmount = 0;
 		balance -= amount;
 
-		if (side == null || side.isEmpty()) {
-			return;
-		}
-
 		if (match.getResult().equals(side)) {
-			balance += match.calculateWinnings(side, amount);
+			winAmount = match.calculateWinnings(side, amount);
+			balance += winAmount;
 			totalWins++;
+
+		} else if (match.getResult().equals("DRAW")) {
+			totalBets++;
+			balance += amount;
+			return winAmount;
+		} else {
+			totalBets++;
+			return amount;
 		}
 		totalBets++;
+
+		return -winAmount;
 	}
 
 	public BigDecimal calculateWinRate() {
