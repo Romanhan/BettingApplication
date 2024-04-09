@@ -61,8 +61,7 @@ public class Casino {
 				} catch (InsufficientFundsException | IllegalWithdrawAmountException e) {
 					player.setHasIllegalAction(true);
 					if (e instanceof InsufficientFundsException) {
-						String[] lastAction = new String[] { String.valueOf(player.getPlayerId()), action[0], action[1],
-								action[2], action[3] };
+						String[] lastAction = new String[] { action[0], action[1], action[2], action[3] };
 						List<String[]> resultList = new ArrayList<>();
 						resultList.add(lastAction);
 						player.setActionData(resultList);
